@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Pool } from "pg";
 import dotenv from "dotenv";
 
@@ -20,6 +21,16 @@ export const connectDB = async () => {
     console.log("🚀 Connected to PostgreSQL RDS");
   } catch (err) {
     console.error("❌ PostgreSQL Connection Error", err);
+=======
+import mongoose from "mongoose";
+
+export const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI!);
+    console.log("✅ MongoDB Connected");
+  } catch (err) {
+    console.error("❌ MongoDB Connection Error:", err);
+>>>>>>> da5501685f29f7be7618f6eeebc647d873a38f82
     process.exit(1);
   }
 };
