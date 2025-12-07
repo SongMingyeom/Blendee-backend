@@ -1,9 +1,0 @@
-### 회원가입 테스트
-POST http://localhost:4000/api/auth/register
-Content-Type: application/json
-
-{
-  "username": "mingyeom",
-  "email": "test@example.com",
-  "password": "1234"
-}
