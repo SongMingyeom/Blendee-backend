@@ -3,7 +3,6 @@ import { register, login } from "../controllers/authController";
 
 const router = express.Router();
 
-<<<<<<< HEAD
 /**
  * @swagger
  * tags:
@@ -73,9 +72,6 @@ router.post("/register", register);
  *       400:
  *         description: Invalid email or password
  */
-=======
-router.post("/register", register);
->>>>>>> da5501685f29f7be7618f6eeebc647d873a38f82
 router.post("/login", login);
 
 export default router;
