@@ -19,25 +19,19 @@
   },
   "homepage": "https://github.com/SongMingyeom/Blendee-backend#readme",
   "dependencies": {
-<<<<<<< HEAD
+    "@prisma/client": "^7.1.0",
     "aws-sdk": "^2.1692.0",
-=======
->>>>>>> da5501685f29f7be7618f6eeebc647d873a38f82
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.3",
-<<<<<<< HEAD
     "multer": "^2.0.2",
     "multer-s3": "^2.10.0",
     "pg": "^8.16.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
-=======
-    "multer": "^2.0.2"
->>>>>>> da5501685f29f7be7618f6eeebc647d873a38f82
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -47,12 +41,10 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.10.0",
-<<<<<<< HEAD
     "@types/pg": "^8.15.6",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
-=======
->>>>>>> da5501685f29f7be7618f6eeebc647d873a38f82
+    "prisma": "^7.1.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   }
