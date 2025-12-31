@@ -10,20 +10,53 @@ export const createCanvas = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { blockCount } = req.body;
+    const {
+      title,
+      description,
+      hashtags,
+      sourceImageUrl,
+      blockCount,
+      isPublic,
+      password,
+      timeLimit,
+    } = req.body;
 
-    const canvas = await canvasService.createCanvas(
-      userId,
-      blockCount || 16
-    );
+    if (!sourceImageUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "Source image URL is required",
+      });
+    }
+
+    if (blockCount && ![16, 64, 128].includes(blockCount)) {
+      return res.status(400).json({
+        success: false,
+        message: "Block count must be 16, 64, or 128",
+      });
+    }
+
+    const canvas = await canvasService.createCanvas(userId, {
+      title,
+      description,
+      hashtags,
+      sourceImageUrl,
+      blockCount: blockCount || 16,
+      isPublic: isPublic !== false,
+      password,
+      timeLimit,
+    });
 
     return res.status(201).json({
-      message: "Canvas created successfully",
+      success: true,
+      message: "Canvas created successfully with pixelized colors",
       data: canvas,
     });
   } catch (error: any) {
     console.error("Create canvas error:", error);
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -35,23 +68,64 @@ export const joinCanvas = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { roomCode, blockColor } = req.body;
+    const { roomCode, assignmentType, selectedColor, password } = req.body;
 
-    if (!roomCode || !blockColor) {
+    if (!roomCode || !assignmentType) {
       return res.status(400).json({
-        message: "Room code and block color are required",
+        message: "Room code and assignment type are required",
       });
     }
 
-    const result = await canvasService.joinCanvas(userId, roomCode, blockColor);
+    if (!["random", "select", "recommend"].includes(assignmentType)) {
+      return res.status(400).json({
+        message: "Assignment type must be 'random', 'select', or 'recommend'",
+      });
+    }
+
+    if (assignmentType === "select" && !selectedColor) {
+      return res.status(400).json({
+        message: "Selected color is required for 'select' mode",
+      });
+    }
+
+    const result = await canvasService.joinCanvas(userId, roomCode, {
+      password,
+      assignmentType,
+      selectedColor,
+    });
 
     return res.status(200).json({
+      success: true,
       message: "Joined canvas successfully",
       data: result,
     });
   } catch (error: any) {
     console.error("Join canvas error:", error);
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// 사용 가능한 색상 목록
+export const getAvailableColors = async (req: Request, res: Response) => {
+  try {
+    const canvasId = parseInt(req.params.id);
+
+    if (isNaN(canvasId)) {
+      return res.status(400).json({ message: "Invalid canvas ID" });
+    }
+
+    const colors = await canvasService.getAvailableColors(canvasId);
+
+    return res.status(200).json({
+      success: true,
+      data: colors,
+    });
+  } catch (error: any) {
+    console.error("Get available colors error:", error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -68,6 +142,7 @@ export const getCanvas = async (req: Request, res: Response) => {
     const canvas = await canvasService.getCanvasById(canvasId, userId);
 
     return res.status(200).json({
+      success: true,
       message: "Canvas retrieved successfully",
       data: canvas,
     });
@@ -77,7 +152,7 @@ export const getCanvas = async (req: Request, res: Response) => {
   }
 };
 
-// 내 Canvas 목록 조회
+// 내 Canvas 목록
 export const getMyCanvases = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
@@ -88,6 +163,7 @@ export const getMyCanvases = async (req: Request, res: Response) => {
     const canvases = await canvasService.getMyCanvases(userId);
 
     return res.status(200).json({
+      success: true,
       message: "Canvases retrieved successfully",
       data: canvases,
     });
@@ -106,6 +182,7 @@ export const completeCanvas = async (req: Request, res: Response) => {
     }
 
     const canvasId = parseInt(req.params.id);
+
     if (isNaN(canvasId)) {
       return res.status(400).json({ message: "Invalid canvas ID" });
     }
@@ -113,11 +190,32 @@ export const completeCanvas = async (req: Request, res: Response) => {
     const canvas = await canvasService.completeCanvas(canvasId, userId);
 
     return res.status(200).json({
+      success: true,
       message: "Canvas completed successfully",
       data: canvas,
     });
   } catch (error: any) {
     console.error("Complete canvas error:", error);
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+export const getMyAssignedBlocks = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const canvasId = parseInt(req.params.id);
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const blocks = await canvasService.getMyAssignedBlocks(userId, canvasId);
+
+    return res.status(200).json({
+      success: true,
+      data: blocks,
+    });
+  } catch (error: any) {
     return res.status(400).json({ message: error.message });
   }
 };

@@ -28,6 +28,10 @@ model User {
 model Canvas {
   id           Int                 @id @default(autoincrement())
   roomCode     String              @unique
+  title        String?
+  description  String?
+  hashtags     String[]
+  sourceImageUrl  String?
   status       CanvasStatus        @default(OPEN)
   isPublic     Boolean             @default(true)
   password     String?
