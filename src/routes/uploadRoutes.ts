@@ -2,15 +2,16 @@ import express from "express";
 import multer from "multer";
 import multerS3 from "multer-s3";
 import s3 from "../config/s3";
-import { authMiddleware } from "../middleware/authMiddleware";
+import { authenticateToken } from "../middleware/authMiddleware"; // 수정!
 
 const router = express.Router();
 
+// src/routes/uploadRoutes.ts
 const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.AWS_S3_BUCKET!,
-    // acl: "public-read",
+    acl: "public-read", // 👈 이 줄 주석 해제!
     metadata: (req, file, cb) => {
       cb(null, { fieldName: file.fieldname });
     },
@@ -45,10 +46,14 @@ const upload = multer({
  *       200:
  *         description: Image uploaded successfully
  */
-router.post("/image", authMiddleware, upload.single("image"), (req: any, res) => {
+router.post("/image", authenticateToken, upload.single("image"), (req, res) => {
+  if (!req.file || !('location' in req.file)) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+  
   res.json({
     message: "Image uploaded successfully",
-    imageUrl: req.file.location,
+    imageUrl: (req.file as any).location,
   });
 });
 

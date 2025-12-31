@@ -1,5 +1,5 @@
 import express from "express";
-import { authMiddleware, AuthRequest } from "../middleware/authMiddleware";
+import { authenticateToken } from "../middleware/authMiddleware"; // 수정!
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ const router = express.Router();
  *       200:
  *         description: User info returned
  */
-router.get("/me", authMiddleware, (req: AuthRequest, res) => {
+router.get("/me", authenticateToken, (req, res) => {
   res.json({
     message: "Authenticated!",
     userId: req.user?.id,

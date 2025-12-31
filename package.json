@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts"
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 ts-node-dev --respawn --transpile-only src/app.ts"
   },
   "repository": {
     "type": "git",
@@ -19,17 +19,21 @@
   },
   "homepage": "https://github.com/SongMingyeom/Blendee-backend#readme",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.1.0",
     "aws-sdk": "^2.1692.0",
+    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "colorthief": "^2.6.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.3",
     "multer": "^2.0.2",
     "multer-s3": "^2.10.0",
     "pg": "^8.16.3",
+    "sharp": "^0.34.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
@@ -42,6 +46,7 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^24.10.0",
     "@types/pg": "^8.15.6",
+    "@types/sharp": "^0.31.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "prisma": "^7.1.0",

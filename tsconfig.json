@@ -7,6 +7,10 @@
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types", "./src/types"]
-  }
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types", "./src/type"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "prisma.config.ts", "prisma"]
 }

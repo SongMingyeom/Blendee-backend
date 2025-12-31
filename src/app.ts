@@ -1,13 +1,14 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 import express from "express";
 import cors from "cors";
-import { connectDB } from "./config/db";
 import authRoutes from "./routes/authRoutes";
-import { swaggerSpec, swaggerUiMiddleware } from "./config/swagger";
 import userRoutes from "./routes/userRoutes";
 import uploadRoutes from "./routes/uploadRoutes";
+import canvasRoutes from "./routes/canvasRoutes";  // 추가!
+import photoRoutes from "./routes/photoRoutes";    // 추가!
+import feedRoutes from "./routes/feedRoutes";      // 추가!
+import { swaggerSpec, swaggerUiMiddleware } from "./config/swagger";
 
 const app = express();
 
@@ -19,9 +20,6 @@ app.use(express.json());
 app.use("/api-docs", swaggerUiMiddleware.serve, swaggerUiMiddleware.setup(swaggerSpec));
 console.log("📘 Swagger UI loaded");
 
-// Connect DB
-connectDB();
-
 // Default Route
 app.get("/", (req, res) => {
   res.send("🍡 Blendee Backend is running!");
@@ -31,6 +29,9 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/canvas", canvasRoutes);  // 추가!
+app.use("/api/photo", photoRoutes);    // 추가!
+app.use("/api/feed", feedRoutes);      // 추가!
 
 // Start Server
 const PORT = process.env.PORT || 4000;

@@ -12,29 +12,30 @@ enum CanvasStatus {
 }
 
 model User {
-  id              Int      @id @default(autoincrement())
+  id              Int                 @id @default(autoincrement())
   username        String
-  email           String   @unique
+  email           String              @unique
   passwordHash    String
   profileImageUrl String?
-  createdAt       DateTime @default(now())
-
-  canvasesCreated Canvas[]         @relation("CanvasCreator")
+  createdAt       DateTime            @default(now())
+  canvasesCreated Canvas[]            @relation("CanvasCreator")
   participations  RoomParticipation[]
   photos          Photo[]
   userCanvases    UserCanvas[]
-  filledBlocks    CanvasBlock[]    @relation("BlockFiller")
+  filledBlocks    CanvasBlock[]       @relation("BlockFiller")
 }
 
 model Canvas {
-  id        Int           @id @default(autoincrement())
-  roomCode  String        @unique
-  status    CanvasStatus @default(OPEN)
-  createdAt DateTime     @default(now())
-
-  createdBy Int
-  creator   User @relation("CanvasCreator", fields: [createdBy], references: [id])
-
+  id           Int                 @id @default(autoincrement())
+  roomCode     String              @unique
+  status       CanvasStatus        @default(OPEN)
+  isPublic     Boolean             @default(true)
+  password     String?
+  startDate    DateTime?
+  endDate      DateTime?
+  createdAt    DateTime            @default(now())
+  createdBy    Int
+  creator      User                @relation("CanvasCreator", fields: [createdBy], references: [id])
   blocks       CanvasBlock[]
   participants RoomParticipation[]
   photos       Photo[]
@@ -42,18 +43,16 @@ model Canvas {
 }
 
 model CanvasBlock {
-  id         Int      @id @default(autoincrement())
-  canvasId   Int
-  hexColor   String
-  orderIndex Int
-  isFilled   Boolean  @default(false)
-
+  id             Int      @id @default(autoincrement())
+  canvasId       Int
+  hexColor       String
+  orderIndex     Int
+  isFilled       Boolean  @default(false)
   filledByUserId Int?
-  filledPhotoId  Int?   @unique
-
-  canvas       Canvas @relation(fields: [canvasId], references: [id])
-  filledByUser User?   @relation("BlockFiller", fields: [filledByUserId], references: [id])
-  filledPhoto  Photo?
+  filledPhotoId  Int?     @unique
+  canvas         Canvas   @relation(fields: [canvasId], references: [id])
+  filledByUser   User?    @relation("BlockFiller", fields: [filledByUserId], references: [id])
+  filledPhoto    Photo?
 }
 
 model RoomParticipation {
@@ -63,26 +62,23 @@ model RoomParticipation {
   blockColor     String
   assignedBlocks Int
   createdAt      DateTime @default(now())
-
-  canvas Canvas @relation(fields: [canvasId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+  canvas         Canvas   @relation(fields: [canvasId], references: [id])
+  user           User     @relation(fields: [userId], references: [id])
 
   @@unique([canvasId, userId])
 }
 
 model Photo {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  canvasId   Int
-  blockId    Int      @unique
-  photoUrl   String
-  isAccepted Boolean  @default(false)
-  createdAt  DateTime @default(now())
-
-  user   User        @relation(fields: [userId], references: [id])
-  canvas Canvas      @relation(fields: [canvasId], references: [id])
-  block  CanvasBlock @relation(fields: [blockId], references: [id])
-
+  id           Int          @id @default(autoincrement())
+  userId       Int
+  canvasId     Int
+  blockId      Int          @unique
+  photoUrl     String
+  isAccepted   Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  user         User         @relation(fields: [userId], references: [id])
+  canvas       Canvas       @relation(fields: [canvasId], references: [id])
+  block        CanvasBlock  @relation(fields: [blockId], references: [id])
   userCanvases UserCanvas[]
 }
 
@@ -91,8 +87,7 @@ model FeedPost {
   canvasId      Int      @unique
   finalImageUrl String
   createdAt     DateTime @default(now())
-
-  canvas Canvas @relation(fields: [canvasId], references: [id])
+  canvas        Canvas   @relation(fields: [canvasId], references: [id])
 }
 
 model UserCanvas {
@@ -101,7 +96,6 @@ model UserCanvas {
   photoId    Int
   blockColor String
   createdAt  DateTime @default(now())
-
-  user  User  @relation(fields: [userId], references: [id])
-  photo Photo @relation(fields: [photoId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  photo      Photo    @relation(fields: [photoId], references: [id])
 }
