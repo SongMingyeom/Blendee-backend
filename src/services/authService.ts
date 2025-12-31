@@ -1,23 +1,45 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/User";
+import prisma from "../config/prisma";
 
-export const registerUser = async (username: string, email: string, password: string) => {
-  const existing = await User.findOne({ email });
+export const registerUser = async (
+  username: string,
+  email: string,
+  password: string
+) => {
+  const existing = await prisma.user.findUnique({
+    where: { email },
+  });
   if (existing) throw new Error("Email already exists");
 
   const hashed = await bcrypt.hash(password, 10);
-  const user = new User({ username, email, password: hashed });
-  await user.save();
+
+  await prisma.user.create({
+    data: {
+      username,
+      email,
+      passwordHash: hashed,
+    },
+  });
 };
 
 export const loginUser = async (email: string, password: string) => {
-  const user = await User.findOne({ email });
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
   if (!user) throw new Error("Invalid email or password");
 
-  const match = await bcrypt.compare(password, user.password);
+  const match = await bcrypt.compare(password, user.passwordHash);
   if (!match) throw new Error("Invalid email or password");
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: "1d" });
-  return { token, username: user.username };
+  const token = jwt.sign(
+    { id: user.id },
+    process.env.JWT_SECRET!,
+    { expiresIn: "1d" }
+  );
+
+  return {
+    token,
+    username: user.username,
+  };
 };
